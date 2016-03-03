@@ -11,12 +11,11 @@ BoolArray::~BoolArray() {}
 
 void BoolArray::Set(const size_t& i, bool value)
 {
-	if (i > mSize) Resize(i + 1);
 	size_t byteIndex = GetByteIndex(i);
 	unsigned8 bitIndex = GetBitIndex(i);
 	unsigned8 bitMask = BitHelper::GetHSSingleBitMask<unsigned8>(bitIndex);
-	mData[byteIndex] &= ~bitMask;
-	if (value) mData[byteIndex] |= bitMask;
+	mData[byteIndex] &= ~bitMask; // Clear the bit
+	if (value) mData[byteIndex] |= bitMask; // Set it if needed
 }
 
 void BoolArray::SetRange(const size_t& start, const size_t& end, bool value)

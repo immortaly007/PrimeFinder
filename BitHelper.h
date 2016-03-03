@@ -52,7 +52,7 @@ namespace BitHelper
 		return (unsigned8)x;
 	}
 
-	inline static unsigned8 GetSet(unsigned8 x)
+	constexpr static unsigned8 GetSet(unsigned8 x)
 	{
 		return BitCountLookupTable::data[x];
 		//// Parallel bit count
@@ -65,13 +65,13 @@ namespace BitHelper
 	template<typename T>
 	inline T GetLSMaskUntil(const unsigned8 bit) { return (~((T)0)) << bit; }
 
-	template<typename T> inline T GetLSSingleBitMask(const unsigned8 bit) { return (T)1 << bit; }
-	template<typename T, unsigned8 bitsInT = sizeof(T) * 8> inline  T GetHSSingleBitMask(const unsigned8 bit) { return (T)1 << (bitsInT - 1 - bit); }
+	template<typename T> constexpr T GetLSSingleBitMask(const unsigned8 bit) { return (T)1 << bit; }
+	template<typename T, unsigned8 bitsInT = sizeof(T) * 8> constexpr T GetHSSingleBitMask(const unsigned8 bit) { return (T)1 << (bitsInT - 1 - bit); }
 	// Template specialization for HSSingleBitMask
-	template<> inline unsigned8  GetHSSingleBitMask(const unsigned8 pos) { return (unsigned8)0x80 >> pos; }
-	template<> inline unsigned16 GetHSSingleBitMask(const unsigned8 pos) { return (unsigned16)0x8000 >> pos; }
-	template<> inline unsigned32 GetHSSingleBitMask(const unsigned8 pos) { return (unsigned32)0x80000000 >> pos; }
-	template<> inline unsigned64 GetHSSingleBitMask(const unsigned8 pos) { return (unsigned64)0x8000000000000000 >> pos; }
+	template<> constexpr unsigned8  GetHSSingleBitMask(const unsigned8 pos) { return (unsigned8)0x80 >> pos; }
+	template<> constexpr unsigned16 GetHSSingleBitMask(const unsigned8 pos) { return (unsigned16)0x8000 >> pos; }
+	template<> constexpr unsigned32 GetHSSingleBitMask(const unsigned8 pos) { return (unsigned32)0x80000000 >> pos; }
+	template<> constexpr unsigned64 GetHSSingleBitMask(const unsigned8 pos) { return (unsigned64)0x8000000000000000 >> pos; }
 
 	template<typename T, unsigned8 bitsInT = sizeof(T) * 8>
 	inline T GetLSMask(const unsigned8 startIndex, const unsigned8 endIndex) {
@@ -99,20 +99,20 @@ namespace BitHelper
 	template<typename T, unsigned8 bitsInT = sizeof(T) * 8>
 	inline unsigned8 GetHSSetBefore(const T value, const unsigned8 pos) { return GetSet((T)(value << (bitsInT - pos))); }
 
-	template<typename T> inline bool GetHS(const T value, const unsigned8 pos) { return (GetHSSingleBitMask<T>(pos) & value) != 0; }
-	template<typename T> inline bool GetLS(const T value, const unsigned8 pos) { return (BitHelper::GetLSSingleBitMask<T>(pos) & value) != 0; }
+	template<typename T> constexpr bool GetHS(const T value, const unsigned8 pos) { return (GetHSSingleBitMask<T>(pos) & value) != 0; }
+	template<typename T> constexpr bool GetLS(const T value, const unsigned8 pos) { return (BitHelper::GetLSSingleBitMask<T>(pos) & value) != 0; }
 
-	template<typename T> inline T SetLS(const T value, const T& setMask, const T& setValue) { return (value & ~setMask) | (setMask & setValue); }
+	template<typename T> constexpr T SetLS(const T value, const T& setMask, const T& setValue) { return (value & ~setMask) | (setMask & setValue); }
 
-	template<typename T> inline void SetLS(T& value, const unsigned8 pos) { value |= GetLSSingleBitMask<T>(pos); }
-	template<typename T> inline void SetHS(T& value, const unsigned8 pos) { value |= GetHSSingleBitMask<T>(pos); }
+	template<typename T> constexpr void SetLS(T& value, const unsigned8 pos) { value |= GetLSSingleBitMask<T>(pos); }
+	template<typename T> constexpr void SetHS(T& value, const unsigned8 pos) { value |= GetHSSingleBitMask<T>(pos); }
 
-	template<typename T> inline void SetLS(T& value, const unsigned8 pos, const bool& set) {
+	template<typename T> constexpr void SetLS(T& value, const unsigned8 pos, const bool& set) {
 		T bitmask = GetLSSingleBitMask<T>(pos);
 		value &= ~bitmask; // Clear the bit
 		if (set) value |= bitmask; // Set it if necessary
 	}
-	template<typename T> inline void SetHS(T& value, const unsigned8 pos, const bool& set)
+	template<typename T> constexpr void SetHS(T& value, const unsigned8 pos, const bool& set)
 	{
 		T bitmask = GetHSSingleBitMask<T>(pos);
 		value &= ~bitmask;
@@ -133,24 +133,24 @@ namespace BitHelper
 	inline unsigned32 FloorToNearestPowerOfTwo(unsigned32 value)	{ return CeilToNearestPowerOfTwo(value) >> 1; }
 
 	template<typename T>
-	inline bool IsPowerOfTwo(T v) { return v && !(v & (v - 1)); }
+	constexpr bool IsPowerOfTwo(T v) { return v && !(v & (v - 1)); }
 
 	// Log2 = the index of the highest significant bit.
 	template<typename T>
-	inline unsigned8  Log2(T v) {
+	constexpr unsigned8  Log2(T v) {
 		unsigned8 r = 0;
 		while (v >>= 1) r++;
 		return (unsigned8)r;
 	}
 
 	template<typename T>
-	inline unsigned8  Log2Ceil(T v) {
+	constexpr unsigned8  Log2Ceil(T v) {
 		return Log2(v) + (IsPowerOfTwo(v) ? 0 : 1); // If v is not a power of two, the number was rounded down.
 	}
 
 	// 2^x is equal to taking the number 1 and shifting it x indices.
 	template<typename T>
-	inline unsigned64 Exp2(const T& v) { return ((unsigned64)1) << v; }
+	constexpr unsigned64 Exp2(const T& v) { return ((unsigned64)1) << v; }
 
 	template<typename T>
 	inline T RoundToBytes(const T& v)
@@ -162,10 +162,10 @@ namespace BitHelper
 
 
 	template<typename T, unsigned8 bitsInT = sizeof(T) * 8>
-	inline T CircularShiftLeft(T v, T shift)  { shift %= bitsInT; return (v << shift) | (v >> (bitsInT - shift)); }
+	constexpr T CircularShiftLeft(T v, T shift)  { shift %= bitsInT; return (v << shift) | (v >> (bitsInT - shift)); }
 
 	template<typename T, unsigned8 bitsInT = sizeof(T) * 8>
-	inline T CircularShiftRight(T v, T shift) { shift %= bitsInT; return (v >> shift) | (v << (bitsInT - shift)); }
+	constexpr T CircularShiftRight(T v, T shift) { shift %= bitsInT; return (v >> shift) | (v << (bitsInT - shift)); }
 
 	template<typename T>
 	inline void SplitInBytesAndMove(T value, std::vector<unsigned8>& destination, size_t offset, size_t size = sizeof(T))

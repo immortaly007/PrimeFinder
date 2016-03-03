@@ -22,8 +22,8 @@ public:
 	
 	bool			operator[](const size_t& i) const;
 private:
-	static inline size_t GetByteIndex(const size_t& i) { return i >> 3; }
-	static inline unsigned8 GetBitIndex(const size_t& i) { return i & 0x7; }
+	static constexpr size_t GetByteIndex(const size_t& i) { return i >> 3; }
+	static constexpr unsigned8 GetBitIndex(const size_t& i) { return i & 0x7; }
 
 	size_t						mSize;
 	std::vector<unsigned8>		mData;
