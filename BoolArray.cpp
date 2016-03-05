@@ -9,15 +9,6 @@ BoolArray::BoolArray(size_t size, bool value) :
 
 BoolArray::~BoolArray() {}
 
-void BoolArray::Set(const size_t& i, bool value)
-{
-	size_t byteIndex = GetByteIndex(i);
-	unsigned8 bitIndex = GetBitIndex(i);
-	unsigned8 bitMask = BitHelper::GetHSSingleBitMask<unsigned8>(bitIndex);
-	mData[byteIndex] &= ~bitMask; // Clear the bit
-	if (value) mData[byteIndex] |= bitMask; // Set it if needed
-}
-
 void BoolArray::SetRange(const size_t& start, const size_t& end, bool value)
 {
 	if (end < start) return;
@@ -26,9 +17,10 @@ void BoolArray::SetRange(const size_t& start, const size_t& end, bool value)
 	size_t startByteIndex = GetByteIndex(start);
 	size_t endByteIndex = GetByteIndex(end);
 
-	unsigned8 bitMask = BitHelper::GetHSMask<unsigned8>(GetBitIndex(start), 8);
+	unsigned8 bitMask = BitHelper::GetLSMask<unsigned8>(GetBitIndex(start), 8);
 	if (startByteIndex == endByteIndex)
-		bitMask = BitHelper::GetHSMask<unsigned8>(GetBitIndex(start), GetBitIndex(end));
+		bitMask = BitHelper::GetLSMask<unsigned8>(GetBitIndex(start), GetBitIndex(end));
+
 	// Set the bits in the first block:
 	mData[startByteIndex] &= ~bitMask;
 	if (value) mData[startByteIndex] |= bitMask;
@@ -42,7 +34,7 @@ void BoolArray::SetRange(const size_t& start, const size_t& end, bool value)
 	// Set the required bits in the end byte
 	if (end % 8 != 0)
 	{
-		bitMask = BitHelper::GetHSMask<unsigned8>(0, GetBitIndex(end));
+		bitMask = BitHelper::GetLSMask<unsigned8>(0, GetBitIndex(end));
 		mData[endByteIndex] &= ~bitMask;
 		if (value) mData[endByteIndex] |= bitMask;
 	}
@@ -57,10 +49,10 @@ bool BoolArray::Any(const size_t& start, size_t end) const
 	size_t endByteIndex = GetByteIndex(end);
 
 	if (startByteIndex == endByteIndex)
-		return (BitHelper::GetHSMask<unsigned8>(GetBitIndex(start), GetBitIndex(end)) & mData[startByteIndex]) != 0;
+		return (BitHelper::GetLSMask<unsigned8>(GetBitIndex(start), GetBitIndex(end)) & mData[startByteIndex]) != 0;
 
 	// Check the first block
-	unsigned8 bitMask = BitHelper::GetHSMask<unsigned8>(GetBitIndex(start), 8);
+	unsigned8 bitMask = BitHelper::GetLSMask<unsigned8>(GetBitIndex(start), 8);
 	if ((mData[startByteIndex] & bitMask) != 0) return true;
 
 	// Check the bytes inbetween
@@ -68,14 +60,9 @@ bool BoolArray::Any(const size_t& start, size_t end) const
 		if ((mData[byte] & 0xFF) != 0) return true;
 
 	// Check the last bits
-	return (mData[endByteIndex] & BitHelper::GetHSMask<unsigned8>(0, GetBitIndex(end))) != 0;
+	return (mData[endByteIndex] & BitHelper::GetLSMask<unsigned8>(0, GetBitIndex(end))) != 0;
 }
 
-bool BoolArray::Get(const size_t& i) const
-{
-	assert(i < mSize);
-	return BitHelper::GetHS(mData[GetByteIndex(i)], GetBitIndex(i));
-}
 void BoolArray::Resize(const size_t& size)
 {
 	mSize = size;
@@ -92,9 +79,4 @@ void BoolArray::Clear()
 void BoolArray::ShrinkToFit()
 {
 	mData.shrink_to_fit();
-}
-
-bool BoolArray::operator[](const size_t& i) const
-{
-	return Get(i);
 }

@@ -2,14 +2,9 @@
 #include "BoolArray.h"
 #include "SqrtHelper.h"
 
-PrimeFinder::PrimeFinder()
-{
-}
+PrimeFinder::PrimeFinder() {}
 
-
-PrimeFinder::~PrimeFinder()
-{
-}
+PrimeFinder::~PrimeFinder() {}
 
 // Returns true iff n is even
 constexpr bool IsEven(size_t n)
@@ -42,17 +37,15 @@ size_t PrimeFinder::GetExpectedPrimeCount(const size_t until)
 	return until / (log(until) - 1.1);
 }
 
-inline void MarkMultiples(BoolArray& sieve, const size_t n, const size_t i, const size_t until)
+inline void MarkMultiples(BoolArray& sieve, const size_t n, const size_t i)
 {
-	size_t multiplier = i + 1; // Start at the square of the number. 
-	size_t cur = i + (multiplier * n);
+	size_t cur = i + ((i + 1) * n); // Start at the square of the number. 
 	while (cur < sieve.Size())
 	{
 		// Since we're multiplying two odd numbers, the result is always odd, and thus in our sieve.
 		sieve.Set(cur, false);
-		multiplier++;
-		cur = i + (multiplier * n);
-	}
+		cur += n;
+	} 
 }
 
 BoolArray GetSieve(const size_t until)
@@ -69,7 +62,7 @@ BoolArray GetSieve(const size_t until)
 			// n is the current number that is considered
 			size_t n = GetNumberAtIndex(i);
 			//MarkMultiples(sieve, n, until);
-			MarkMultiples(sieve, n, i, until);
+			MarkMultiples(sieve, n, i);
 		}
 	}
 	return sieve;

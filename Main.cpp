@@ -3,7 +3,7 @@
 #include <fstream>
 
 int main() {
-	size_t until = 10000000000;
+	size_t until = 1000000000;
 
 	PrimeFinder finder;
 	printf("Expecting %zu primes (estimated)...\n", finder.GetExpectedPrimeCount(until));
