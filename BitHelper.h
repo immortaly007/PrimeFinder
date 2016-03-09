@@ -84,6 +84,7 @@ namespace BitHelper
 		s <<= startIndex;
 		return s;
 	}
+
 	template<typename T, unsigned8 bitsInT = sizeof(T) * 8>
 	inline T GetHSMask(const unsigned8 startIndex, const unsigned8 endIndex) {
 		if (startIndex == endIndex) return (T)0;
@@ -95,6 +96,9 @@ namespace BitHelper
 		s >>= startIndex;
 		return s;
 	}
+
+	/* Returns the opposite of 0 for some type T (i.e. for unsigned8 will return 0xFF, for unsigned32 will return 0xFFFFFFFF */
+	template<typename T> constexpr T GetAllSet() { return ~((T)0); }
 
 	template<typename T, unsigned8 bitsInT = sizeof(T) * 8>
 	inline unsigned8 GetHSSetBefore(const T value, const unsigned8 pos) { return GetSet((T)(value << (bitsInT - pos))); }
@@ -137,10 +141,8 @@ namespace BitHelper
 
 	// Log2 = the index of the highest significant bit.
 	template<typename T>
-	constexpr unsigned8  Log2(T v) {
-		unsigned8 r = 0;
-		while (v >>= 1) r++;
-		return (unsigned8)r;
+	constexpr unsigned8 Log2(T v) {
+		return v <= 1 ? 0 : 1 + Log2(v >> 1);
 	}
 
 	template<typename T>

@@ -19,7 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="BoolArray.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="PrimeFinder.cpp" />
     <ClCompile Include="SqrtHelper.h" />

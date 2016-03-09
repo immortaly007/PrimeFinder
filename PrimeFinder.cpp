@@ -37,7 +37,7 @@ size_t PrimeFinder::GetExpectedPrimeCount(const size_t until)
 	return until / (log(until) - 1.1);
 }
 
-inline void MarkMultiples(BoolArray& sieve, const size_t n, const size_t i)
+inline void MarkMultiples(BoolArray<>& sieve, const size_t n, const size_t i)
 {
 	size_t cur = i + ((i + 1) * n); // Start at the square of the number. 
 	while (cur < sieve.Size())
@@ -48,10 +48,10 @@ inline void MarkMultiples(BoolArray& sieve, const size_t n, const size_t i)
 	} 
 }
 
-BoolArray GetSieve(const size_t until)
+BoolArray<> GetSieve(const size_t until)
 {
 	// Initialize the sieve assuming all numbers are prime
-	BoolArray sieve(GetIndex(until) + 1, true);
+	BoolArray<> sieve(GetIndex(until) + 1, true);
 
 	size_t sqrtUntil = SqrtHelper::isqrt(until);
 	size_t iSqrtUntil = GetIndex(sqrtUntil);
@@ -71,7 +71,7 @@ BoolArray GetSieve(const size_t until)
 std::vector<size_t> PrimeFinder::FindPrimes(const size_t until)
 {
 	// Find prime number using the sieve of Eratosthenes
-	BoolArray sieve = GetSieve(until);
+	BoolArray<> sieve = GetSieve(until);
 
 	size_t expected = GetExpectedPrimeCount(until);
 	
