@@ -43,7 +43,7 @@ inline void MarkMultiples(BoolArray<>& sieve, const size_t n, const size_t i)
 	while (cur < sieve.Size())
 	{
 		// Since we're multiplying two odd numbers, the result is always odd, and thus in our sieve.
-		sieve.Set(cur, false);
+		sieve.ClearBit(cur);
 		cur += n;
 	} 
 }

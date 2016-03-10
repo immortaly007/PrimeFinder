@@ -21,16 +21,14 @@ public:
 	BoolArray() : BoolArray(0) {}
 	~BoolArray() {}
 
-	inline void	Set(const size_t& i, bool value)
-	{
-		if (value) mData[GetWordIndex(i)] |= GetBitMask(GetBitIndex(i)); // Set the bit
-		else mData[GetWordIndex(i)] &= ~GetBitMask(GetBitIndex(i)); // Clear the bit
-	}
+	inline void	Set(const size_t& i, bool value) { value ? SetBit(i) : ClearBit(i); }
+	// Set the bit at position i to true
+	inline void SetBit(const size_t& i) { mData[GetWordIndex(i)] |= GetBitMask(GetBitIndex(i)); }
 
-	inline bool Get(const size_t& i) const
-	{
-		return BitHelper::GetLS(mData[GetWordIndex(i)], GetBitIndex(i));
-	}
+	// Set the bit at position i to false
+	inline void ClearBit(const size_t& i) { mData[GetWordIndex(i)] &= ~GetBitMask(GetBitIndex(i)); }
+
+	inline bool Get(const size_t& i) const { return BitHelper::GetLS(mData[GetWordIndex(i)], GetBitIndex(i)); }
 
 	void SetRange(const size_t& start, const size_t& end, bool value)
 	{
